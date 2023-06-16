@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+
+  # Master
+  pgbouncer-master:
+    image: bitnami/pgbouncer:1.19.1
+    environment:
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_HOST=postgres-master
+      - PGBOUNCER_PORT=6432
+    ports:
+      - '6432:6432'
+    volumes:
+      - ./pgbouncer/master/conf/:/bitnami/pgbouncer/conf/
+
+  postgres-master:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - ./postgres/master:/var/lib/postgresql/data
+      - ./init/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+
+  # Replica 1
+  pgbouncer-replica-1:
+    image: bitnami/pgbouncer:1.19.1
+    environment:
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_HOST=postgres-replica-1
+      - PGBOUNCER_PORT=6433
+    ports:
+      - '6433:6433'
+    volumes:
+      - ./pgbouncer/replica-1/conf/:/bitnami/pgbouncer/conf/
+
+  postgres-replica-1:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5433:5432'
+    volumes: 
+      - ./postgres/replica-1:/var/lib/postgresql/data
+
+  # Replica 2
+  pgbouncer-replica-2:
+    image: bitnami/pgbouncer:1.19.1
+    environment:
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_HOST=postgres-replica-2
+      - PGBOUNCER_PORT=6434
+    ports:
+      - '6434:6434'
+    volumes:
+      - ./pgbouncer/replica-2/conf/:/bitnami/pgbouncer/conf/
+
+  postgres-replica-2:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5434:5432'
+    volumes: 
+      - ./postgres/replica-2:/var/lib/postgresql/data
