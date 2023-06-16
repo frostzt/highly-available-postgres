@@ -2,6 +2,15 @@ version: '3.8'
 
 services:
 
+  haproxy:
+    image: haproxy:2.8
+    volumes:
+      - ./haproxy:/haproxy-override
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "10001:10001"
+      - "10002:10002"
+
   # Master
   pgbouncer-master:
     image: bitnami/pgbouncer:1.19.1
